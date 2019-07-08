@@ -533,6 +533,7 @@ class Keywords(object):
     def delete(
         self,
         endpoint,
+        body=None,
         timeout=None,
         allow_redirects=None,
         validate=True,
@@ -563,6 +564,7 @@ class Keywords(object):
         endpoint = self._input_string(endpoint)
         request = deepcopy(self.request)
         request["method"] = "DELETE"
+        request["body"] = self.input(body)
         if allow_redirects is not None:
             request["allowRedirects"] = self._input_boolean(allow_redirects)
         if timeout is not None:
