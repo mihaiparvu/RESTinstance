@@ -1,15 +1,24 @@
 [tool.black]
 line-length = 80
-#py36 = true
 exclude = '''
 /(
+  | \.circleci
   | \.git
   | \.mypy_cache
   | \.pytest_cache
-  | \.venvs
-  | tests
+  | \.venv
+  | pip-wheel-metadata
+  | atest
   | build
   | dist
+  | docs
+  | examples
+  | node_modules
   | results
-x)/
+  | testapi
+)/
 '''
+
+[tool.pytest]
+testpaths = "test"
+addopts = "--cov --spec --instafail --diff-type=auto"

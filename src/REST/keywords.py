@@ -20,7 +20,7 @@ from __future__ import division
 from io import open
 from .compat import IS_PYTHON_2, STRING_TYPES
 
-from pytz import utc
+from pytz import utc, UnknownTimeZoneError
 from tzlocal import get_localzone
 
 from collections import OrderedDict
@@ -59,7 +59,7 @@ class Keywords(object):
 
     ### Keywords start here
 
-    @keyword(name=None, tags=("settings",))
+    @keyword(name="Set Client Cert", tags=("settings",))
     def set_client_cert(self, cert):
         """*Sets the client cert for the requests.*
 
@@ -77,7 +77,7 @@ class Keywords(object):
         self.request["cert"] = self._input_client_cert(cert)
         return self.request["cert"]
 
-    @keyword(name=None, tags=("settings",))
+    @keyword(name="Set Headers", tags=("settings",))
     def set_headers(self, headers):
         """*Sets new request headers or updates the existing.*
 
@@ -93,7 +93,7 @@ class Keywords(object):
         self.request["headers"].update(self._input_object(headers))
         return self.request["headers"]
 
-    @keyword(name=None, tags=("expectations",))
+    @keyword(name="Expect Request", tags=("expectations",))
     def expect_request(self, schema, merge=False):
         """*Sets the schema to validate the request properties*
 
@@ -135,7 +135,7 @@ class Keywords(object):
             self.schema["properties"]["request"] = schema
         return self.schema["properties"]["request"]
 
-    @keyword(name=None, tags=("expectations",))
+    @keyword(name="Expect Response", tags=("expectations",))
     def expect_response(self, schema, merge=False):
         """*Sets the schema to validate the response properties.*
 
@@ -179,7 +179,7 @@ class Keywords(object):
             self.schema["properties"]["response"] = schema
         return self.schema["properties"]["response"]
 
-    @keyword(name=None, tags=("expectations",))
+    @keyword(name="Expect Response Body", tags=("expectations",))
     def expect_response_body(self, schema):
         """*Updates the schema to validate the response body properties.*
 
@@ -226,7 +226,7 @@ class Keywords(object):
             response_properties["body"] = self._input_object(schema)
         return response_properties["body"]
 
-    @keyword(name=None, tags=("expectations",))
+    @keyword(name="Clear Expectations", tags=("expectations",))
     def clear_expectations(self):
         """*Resets the expectations for both request and response.*
 
@@ -243,7 +243,7 @@ class Keywords(object):
         }
         return self.schema
 
-    @keyword(name=None, tags=("http",))
+    @keyword(name="HEAD", tags=("http",))
     def head(
         self,
         endpoint,
@@ -287,7 +287,7 @@ class Keywords(object):
             request["headers"].update(self._input_object(headers))
         return self._request(endpoint, request, validate)["response"]
 
-    @keyword(name=None, tags=("http",))
+    @keyword(name="OPTIONS", tags=("http",))
     def options(
         self,
         endpoint,
@@ -330,7 +330,7 @@ class Keywords(object):
             request["headers"].update(self._input_object(headers))
         return self._request(endpoint, request, validate)["response"]
 
-    @keyword(name=None, tags=("http",))
+    @keyword(name="GET", tags=("http",))
     def get(
         self,
         endpoint,
@@ -388,7 +388,7 @@ class Keywords(object):
             request["headers"].update(self._input_object(headers))
         return self._request(endpoint, request, validate)["response"]
 
-    @keyword(name=None, tags=("http",))
+    @keyword(name="POST", tags=("http",))
     def post(
         self,
         endpoint,
@@ -435,7 +435,7 @@ class Keywords(object):
             request["headers"].update(self._input_object(headers))
         return self._request(endpoint, request, validate)["response"]
 
-    @keyword(name=None, tags=("http",))
+    @keyword(name="PUT", tags=("http",))
     def put(
         self,
         endpoint,
@@ -482,7 +482,7 @@ class Keywords(object):
             request["headers"].update(self._input_object(headers))
         return self._request(endpoint, request, validate)["response"]
 
-    @keyword(name=None, tags=("http",))
+    @keyword(name="PATCH", tags=("http",))
     def patch(
         self,
         endpoint,
@@ -529,7 +529,7 @@ class Keywords(object):
             request["headers"].update(self._input_object(headers))
         return self._request(endpoint, request, validate)["response"]
 
-    @keyword(name=None, tags=("http",))
+    @keyword(name="DELETE", tags=("http",))
     def delete(
         self,
         endpoint,
@@ -574,7 +574,7 @@ class Keywords(object):
             request["headers"].update(self._input_object(headers))
         return self._request(endpoint, request, validate)["response"]
 
-    @keyword(name=None, tags=("assertions",))
+    @keyword(name="Missing", tags=("assertions",))
     def missing(self, field):
         """*Asserts the field does not exist.*
 
@@ -612,7 +612,7 @@ class Keywords(object):
             "Expected '%s' to not exist, but it does." % (field)
         )
 
-    @keyword(name=None, tags=("assertions",))
+    @keyword(name="Null", tags=("assertions",))
     def null(self, field, **validations):
         """*Asserts the field as JSON null.*
 
@@ -654,7 +654,7 @@ class Keywords(object):
             values.append(reality)
         return values
 
-    @keyword(name=None, tags=("assertions",))
+    @keyword(name="Boolean", tags=("assertions",))
     def boolean(self, field, value=None, **validations):
         """*Asserts the field as JSON boolean.*
 
@@ -706,7 +706,7 @@ class Keywords(object):
             values.append(reality)
         return values
 
-    @keyword(name=None, tags=("assertions",))
+    @keyword(name="Integer", tags=("assertions",))
     def integer(self, field, *enum, **validations):
         """*Asserts the field as JSON integer.*
 
@@ -770,7 +770,7 @@ class Keywords(object):
             values.append(reality)
         return values
 
-    @keyword(name=None, tags=("assertions",))
+    @keyword(name="Number", tags=("assertions",))
     def number(self, field, *enum, **validations):
         """*Asserts the field as JSON number.*
 
@@ -832,7 +832,7 @@ class Keywords(object):
             values.append(reality)
         return values
 
-    @keyword(name=None, tags=("assertions",))
+    @keyword(name="String", tags=("assertions",))
     def string(self, field, *enum, **validations):
         """*Asserts the field as JSON string.*
 
@@ -895,7 +895,7 @@ class Keywords(object):
             values.append(reality)
         return values
 
-    @keyword(name=None, tags=("assertions",))
+    @keyword(name="Object", tags=("assertions",))
     def object(self, field, *enum, **validations):
         """*Asserts the field as JSON object.*
 
@@ -955,7 +955,7 @@ class Keywords(object):
             values.append(reality)
         return values
 
-    @keyword(name=None, tags=("assertions",))
+    @keyword(name="Array", tags=("assertions",))
     def array(self, field, *enum, **validations):
         """*Asserts the field as JSON array.*
 
@@ -1012,7 +1012,7 @@ class Keywords(object):
             values.append(reality)
         return values
 
-    @keyword(name=None, tags=("I/O",))
+    @keyword(name="Input", tags=("I/O",))
     def input(self, what):
         """*Converts the input to JSON and returns it.*
 
@@ -1051,7 +1051,7 @@ class Keywords(object):
         except ValueError:
             return self._input_string(what)
 
-    @keyword(name=None, tags=("I/O",))
+    @keyword(name="Output Schema", tags=("I/O",))
     def output_schema(
         self, what="", file_path=None, append=False, sort_keys=False
     ):
@@ -1131,7 +1131,7 @@ class Keywords(object):
                 )
         return json
 
-    @keyword(name=None, tags=("I/O",))
+    @keyword(name="Output", tags=("I/O",))
     def output(self, what="", file_path=None, append=False, sort_keys=False):
         """*Outputs JSON to terminal or a file.*
 
@@ -1224,7 +1224,7 @@ class Keywords(object):
                 )
         return json
 
-    @keyword(name=None, tags=("I/O",))
+    @keyword(name="REST Instances", tags=("I/O",))
     def rest_instances(self, file_path=None, sort_keys=False):
         """*Writes the instances as JSON to a file.*
 
@@ -1311,10 +1311,14 @@ class Keywords(object):
                 % (request["method"], request["url"], e)
             )
         utc_datetime = datetime.now(tz=utc)
-        request["timestamp"] = {
-            "utc": utc_datetime.isoformat(),
-            "local": utc_datetime.astimezone(get_localzone()).isoformat(),
-        }
+        request["timestamp"] = {}
+        request["timestamp"]["utc"] = utc_datetime.isoformat()
+        try:
+            request["timestamp"]["local"] = utc_datetime.astimezone(
+                get_localzone()
+            ).isoformat()
+        except UnknownTimeZoneError as e:
+            logger.info("Cannot infer local timestamp! tzlocal:%s" % str(e))
         if validate and self.spec:
             self._assert_spec(self.spec, response)
         instance = self._instantiate(request, response, validate)
